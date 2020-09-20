@@ -73,16 +73,6 @@ function getLegislatorData() {
 	} // End loop through all rows
 	// END ADD SOCIAL MEDIA HYPERLINKS
 
-	// BEGIN FIX FOR INCONSISTENT SEMI-COLONS CURRENTLY IN DATA SOURCE
-	const ADDRESSINDEX = HEADER.indexOf("address");
-	// Loop through each row (except header)
-	for (let i = 0; i < DATA.length; i++) {
-		let row = DATA[i];
-		let address = row[ADDRESSINDEX].replace(";", "");
-		CSVDATA[i+1][ADDRESSINDEX] = address;
-	}
-	// END FIX FOR INCONSISTENT SEMI-COLONS IN DATA
-
 	ACTIVESHEET.setFrozenRows(1);
 	ACTIVESHEET.getRange(1, 1, CSVDATA.length, HEADER.length).setValues(CSVDATA);
 
