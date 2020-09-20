@@ -23,11 +23,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 function onOpen() {
-    SpreadsheetApp
-    	.getUi()
-        .createMenu("Legislator Data")
-        .addItem("Get/Update Legislator Data", "getLegislatorData")
-        .addToUi();
+	SpreadsheetApp
+		.getUi()
+		.createMenu("Legislator Data")
+		.addItem("Get/Update Legislator Data", "getLegislatorData")
+		.addToUi();
 }
 
 
@@ -73,8 +73,28 @@ function getLegislatorData() {
 	} // End loop through all rows
 	// END ADD SOCIAL MEDIA HYPERLINKS
 
+	// BEGIN SPLITTING UP ADDRESS COLUMN
+	const ADDRESSINDEX = HEADER.indexOf("address");
+
+	// Add new column headers
+	CSVDATA[0].splice(ADDRESSINDEX + 1, 0, "city");
+	CSVDATA[0].splice(ADDRESSINDEX + 2, 0, "zip");
+
+	// Add new row data
+	for (let i = 0; i < DATA.length; i++) {
+		let row = DATA[i];
+		let address = row[ADDRESSINDEX];
+		let [building, zip] = address.split(" Washington DC ");
+		CSVDATA[i+1][ADDRESSINDEX] = building;
+		CSVDATA[i+1].splice(ADDRESSINDEX + 1, 0, "Washington, DC");
+		CSVDATA[i+1].splice(ADDRESSINDEX + 2, 0, zip);
+	}
+	// END SPLITTING UP ADDRESS COLUMN
+
 	ACTIVESHEET.setFrozenRows(1);
-	ACTIVESHEET.getRange(1, 1, CSVDATA.length, HEADER.length).setValues(CSVDATA);
+	ACTIVESHEET.getRange(1, 1, CSVDATA.length, CSVDATA[0].length)
+		.setNumberFormat("@") // Set range format as plain text
+		.setValues(CSVDATA);
 
 	// Sort by state
 	//const STATEINDEX = HEADER.indexOf("state");
